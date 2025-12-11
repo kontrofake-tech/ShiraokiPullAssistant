@@ -74,7 +74,7 @@ def calculate_data(total_pulls, mode_selection, pool_ssr, pool_sr):
             if prob < 0.005 and k > expected: break
             k += 1
         rem = max(0.0, 1.0 - cum_excl)
-        if rem > 0.0001: rows.append((f"{k}+", rem, rem))
+        if rem > 0.0001: rows.append((f"{k+1}+", rem, rem))
         return rows
 
     p_1_p_sr = get_avg(r_p_sr_n, r_p_sr_s)
