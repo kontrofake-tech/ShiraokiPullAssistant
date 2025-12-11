@@ -190,9 +190,9 @@ def render_html(data):
 #              STREAMLIT UI
 # ==========================================
 
-st.set_page_config(page_title="Gacha Calculator", page_icon="🎲", layout="wide")
+st.set_page_config(page_title="Shiraoki Pull Predictor", page_icon="🔮", layout="wide")
 
-st.title("🎲 Gacha Calculator")
+st.title("🔮 Shiraoki Pull Predictor")
 st.markdown("---")
 
 col_ui, col_res = st.columns([1, 2])
@@ -206,7 +206,7 @@ with col_ui:
     w_pool_ssr = c1.number_input("Pool SSRs", value=43)
     w_pool_sr = c2.number_input("Pool SRs", value=32)
     
-    if st.button("Calculate Chances", type="primary", use_container_width=True):
+    if st.button("Tell me my odds, Shiraoki 🙇", type="primary", use_container_width=True):
         st.session_state.calculated = True
 
 # Results Area
@@ -217,4 +217,4 @@ if 'calculated' in st.session_state:
         st.components.v1.html(html_content, height=800, scrolling=True)
 else:
     with col_res:
-        st.info("👈 Enter your pulls and click Calculate!")
+        st.info("👈 Set up and click Calculate!\n(Card count info accurate as of 11.12.2025)")
