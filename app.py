@@ -87,11 +87,11 @@ def calculate_data(total_pulls, mode_selection, pool_ssr, pool_sr):
         data['tables'].append({'name': 'Total Banner SSRs (A+B)', 'rows': gen_table_rows(total_pulls, r_p_ssr), 'color': '#E53E3E', 'bg': '#FFF5F5'})
     
     if has_promo_sr:
-        data['tables'].append({'name': 'Specific Promo SR', 'rows': gen_table_rows(total_pulls, p_1_p_sr), 'color': '#D69E2E', 'bg': '#FFFFF0'})
+        data['tables'].append({'name': 'Specific Banner SR', 'rows': gen_table_rows(total_pulls, p_1_p_sr), 'color': '#D69E2E', 'bg': '#FFFFF0'})
     
-    data['tables'].append({'name': 'Specific Non-Promo SR', 'rows': gen_table_rows(total_pulls, p_1_o_sr), 'color': '#718096', 'bg': '#F7FAFC'})
-    data['tables'].append({'name': 'Specific Non-Promo SSR', 'rows': gen_table_rows(total_pulls, p_1_o_ssr), 'color': '#805AD5', 'bg': '#FAF5FF'})
-    data['tables'].append({'name': 'Specific Promo SSR', 'rows': gen_table_rows(total_pulls, 0.0075), 'color': '#E53E3E', 'bg': '#FFF5F5'})
+    data['tables'].append({'name': 'Specific Off-Banner SR', 'rows': gen_table_rows(total_pulls, p_1_o_sr), 'color': '#718096', 'bg': '#F7FAFC'})
+    data['tables'].append({'name': 'Specific Off-Banner SSR', 'rows': gen_table_rows(total_pulls, p_1_o_ssr), 'color': '#805AD5', 'bg': '#FAF5FF'})
+    data['tables'].append({'name': 'Specific Banner SSR', 'rows': gen_table_rows(total_pulls, 0.0075), 'color': '#E53E3E', 'bg': '#FFF5F5'})
 
     return data
 
