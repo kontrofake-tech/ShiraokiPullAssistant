@@ -6,19 +6,23 @@ from better_profanity import profanity
 # Load the default profanity list
 profanity.load_censor_words()
 
-# ==========================================
-#          FUNNY RESPONSES (EASTER EGGS)
-# ==========================================
-# These are NOT blocked; they just trigger custom toast messages.
-FUNNY_RESPONSES = {
+EASTER_EGGS = {
     "gold ship": ("You hear a dropkick approaching rapidly...", "🚢"),
+    "goldship": ("You hear a dropkick approaching rapidly...", "🚢"),
+    "golshi": ("You hear a dropkick approaching rapidly...", "🚢"),
+    "mambo": ("Mamboo, mambo..."),
+    "tannhauser": ("Mamboo, mambo..."),
+    "harikite": ("HARRIKITE IKKOU!", "🙏"),
+    "harrikite": ("HARRIKITE IKKOU!", "🙏"),
+    "kitasan": ("HARRIKITE IKKOU!", "🙏"),
+    "speed": ("Is your account kinda Kitasan-less?", "😌")
     "carrot": ("Shiraoki looks pleased with the offering.", "🥕"),
     "money": ("Shiraoki accepts your bribe.", "💸"),
     "genshin": ("Wrong universe, Trainer.", "🤔"),
     "fgo": ("Wrong universe, Trainer.", "🤔"),
     "blue archive": ("Wrong universe, Trainer.", "🤔"),
-    "goku": ("He's not in the banner.", "💪"),
-    "please": ("Begging might help...", "🥺"),
+    "goku": ("He's not in the banner my guy.", "💪"),
+    "please": ("Your humility is appreciated...", "🥺"),
 }
 
 # ==========================================
@@ -306,7 +310,7 @@ with col_ui:
                             toast_msg = "Shiraoki has received your prayer... 🙏"
                             icon = "⛩️"
                             lower_input = full_input.lower()
-                            for key, (msg, ico) in FUNNY_RESPONSES.items():
+                            for key, (msg, ico) in EASTER_EGGS.items():
                                 if key in lower_input:
                                     toast_msg = msg
                                     icon = ico
