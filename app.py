@@ -1,28 +1,91 @@
 import streamlit as st
 import math
 import requests
-from better_profanity import profanity
 
-# Load the default profanity list
-profanity.load_censor_words()
+# --- Import Profanity Filter with Fallback ---
+try:
+    from better_profanity import profanity
+    profanity.load_censor_words()
+    HAS_PROFANITY_LIB = True
+except ImportError:
+    HAS_PROFANITY_LIB = False
+    FALLBACK_BAD_WORDS = ["nsfw", "scam", "xxx", "porn", "hentai"]
 
+# ==========================================
+#          FUNNY RESPONSES (EASTER EGGS)
+# ==========================================
+# Format: "keyword": ("Message", "Icon")
+# Keys must be lowercase!
 EASTER_EGGS = {
+    # --- The Classics ---
     "gold ship": ("You hear a dropkick approaching rapidly...", "🚢"),
     "goldship": ("You hear a dropkick approaching rapidly...", "🚢"),
     "golshi": ("You hear a dropkick approaching rapidly...", "🚢"),
-    "mambo": ("Mamboo, mambo..."),
-    "tannhauser": ("Mamboo, mambo..."),
-    "harikite": ("HARRIKITE IKKOU!", "🙏"),
-    "harrikite": ("HARRIKITE IKKOU!", "🙏"),
-    "kitasan": ("HARRIKITE IKKOU!", "🙏"),
+    "mambo": ("Mamboo, mambo...", "💃"), 
+    "tannhauser": ("Mamboo, mambo...", "💃"),
+    "machitan": ("Mamboo, mambo...", "💃"),
+    "harikite": ("HARRIKITE IKKOU!", "😤"),
+    "harrikite": ("HARRIKITE IKKOU!", "😤"),
+    "kitasan": ("HARRIKITE IKKOU!", "😤"),
     "speed": ("Is your account kinda Kitasan-less?", "😌"),
     "carrot": ("Shiraoki looks pleased with the offering.", "🥕"),
     "money": ("Shiraoki accepts your bribe.", "💸"),
+    
+    # --- Other Gachas / Memes ---
     "genshin": ("Wrong universe, Trainer.", "🤔"),
     "fgo": ("Wrong universe, Trainer.", "🤔"),
     "blue archive": ("Wrong universe, Trainer.", "🤔"),
     "goku": ("He's not in the banner my guy.", "💪"),
     "please": ("Your humility is appreciated...", "🥺"),
+    "scam": ("It's not a scam, it's 'surprise mechanics'.", "🎰"),
+    "rainbow": ("Please let the gate be rainbow...", "🌈"),
+    "gate": ("Open!!", "🚪"),
+
+    # --- Character Specifics ---
+    "bakushin": ("BAKUSHIN BAKUSHIN!!", "🏫"),
+    "teio": ("Hachimi Hachimi Hachimi~", "🍯"),
+    "mcqueen": ("Desuwa!", "🍰"),
+    "oguri": ("Did someone say food?", "🍙"),
+    "burger": ("Oguri Cap is breathing heavily.", "🍔"),
+    "rice": ("Onee-sama...", "🌹"),
+    "urara": ("Urara will do her best!", "🌸"),
+    "tazuna": ("Let's see the results of your training.", "💚"),
+    "green devil": ("The green demon is watching...", "😈"),
+    "rudolf": ("That outcome was... a-neigh-zing.", "🐴"),
+    "grass": ("My sword is ready.", "🗡️"),
+    "tachyon": ("Let's experiment on your luck...", "🧪"),
+    "cafe": ("Friend is watching...", "👻"),
+    "turbo": ("TWIN TURBO ENGINE IGNITION!!!", "🔥"),
+    "curren": ("Kawaii~!", "🤳"),
+    "fine": ("Ramen time?", "🍜"),
+    "ramen": ("Fine Motion wants to know your location.", "🍜"),
+    "scarlet": ("I'm number one!", "🥇"),
+    "vodka": ("Gimme a drink.", "🥃"),
+    "biwa": ("Who are you calling big head?!", "👓"),
+    "hayahide": ("Who are you calling big head?!", "👓"),
+    "sweep": ("I'll cast a spell on you!", "🧙‍♀️"),
+    "helios": ("Party time! Way!", "🤟"),
+    "palmer": ("Nige-kiri!", "🏃"),
+    "nature": ("Third place isn't so bad...", "🥉"),
+    "maya": ("Take off!", "✈️"),
+    "topgun": ("Take off!", "✈️"),
+    "opera": ("Hahaha! The Opera King has arrived!", "👑"),
+    "tm": ("Hahaha! The Opera King has arrived!", "👑"),
+    "admire": ("Vega...", "🌠"),
+    "vega": ("...", "🌠"),
+    "ticket": ("WINNING TICKET!!", "😭"),
+    "spe": ("Japan's Best Horse Girl!", "🗾"),
+    "suzuka": ("I just want to run in the silence.", "🍃"),
+    "el": ("El Condor Pasa!!", "🦅"),
+    "king": ("Ohohoho!", "👑"),
+    "halo": ("Ohohoho!", "👑"),
+    "shakur": ("Fine, I'll run.", "😒"),
+    "ruby": ("Ojou-sama...", "💎"),
+    "diamond": ("Breaking the curse!", "💎"),
+    "satono": ("Breaking the curse!", "💎"),
+    "eclipse": ("There is no Eclipse.", "🌑"),
+    "durament": ("Kimo...", "🎸"),
+    "ikuno": ("Check.", "🤓"),
 }
 
 # ==========================================
@@ -33,7 +96,7 @@ def send_prayer(name, item, text, image_file):
     webhook_url = st.secrets.get("DISCORD_URL", "")
     
     if not webhook_url:
-        return False, "❌ Error: Streamlit SECRET missing."
+        return False, "❌ Error: DISCORD_URL is missing in secrets."
 
     # Default values for empty inputs
     safe_name = name.strip() if name else "Anonymous"
@@ -62,9 +125,9 @@ def send_prayer(name, item, text, image_file):
         if response.status_code in [200, 204]:
             return True, "Prayer sent!"
         elif response.status_code == 413:
-            return False, "❌ File too large for Prayer Server."
+            return False, "❌ File too large for Discord."
         else:
-            return False, f"❌ Prayer Server rejected the prayer (Status: {response.status_code})"
+            return False, f"❌ Discord rejected the prayer (Status: {response.status_code})"
     except Exception as e:
         return False, f"❌ Connection Error: {e}"
 
@@ -286,9 +349,16 @@ with col_ui:
 
         # Only proceed if at least one field is filled
         if p_name or p_item or prayer_text or catalyst:
-            # 1. Check for Profanity (Automated)
+            # 1. Check for Profanity (Safe Check)
             full_input = f"{p_name} {p_item} {prayer_text}"
-            if profanity.contains_profanity(full_input):
+            
+            is_profane = False
+            if HAS_PROFANITY_LIB:
+                is_profane = profanity.contains_profanity(full_input)
+            else:
+                is_profane = any(bad in full_input.lower() for bad in FALLBACK_BAD_WORDS)
+
+            if is_profane:
                 st.error("⚠️ Shiraoki rejects impure thoughts. (Profanity detected - Prayer NOT sent)")
             else:
                 # 2. Check File Size (10MB limit)
