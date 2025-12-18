@@ -10,7 +10,7 @@ def send_prayer(name, item, text, image_file):
     webhook_url = st.secrets.get("DISCORD_URL", "")
     
     if not webhook_url:
-        return False, "❌ Error: DISCORD_URL is missing in secrets."
+        return False, "❌ Error: Streamlit SECRET missing."
 
     # Default values for empty inputs
     safe_name = name.strip() if name else "Anonymous"
@@ -38,10 +38,12 @@ def send_prayer(name, item, text, image_file):
         response = requests.post(webhook_url, data=data, files=files)
         if response.status_code in [200, 204]:
             return True, "Prayer sent!"
+        elif response.status_code == 413:
+            return False, "❌ File too large for Prayer Server."
         else:
-            return False, f"❌ Discord rejected the prayer (Status: {response.status_code})"
+            return False, f"❌ Shiraoki rejected the prayer (Status: {response.status_code}), presumably due to the dev being stupid"
     except Exception as e:
-        return False, f"❌ Connection Error: {e}"
+        return False, f"❌ Prayer error, sit tight: {e}"
 
 # ==========================================
 #              LOGIC & MATH
@@ -249,24 +251,52 @@ with col_ui:
     w_pool_ssr = c1.number_input("Pool SSRs", value=45)
     w_pool_sr = c2.number_input("Pool SRs", value=33)
     
-    st.markdown("---")
-    st.subheader("🙏 Shrine Offering")
-    with st.expander("Write a prayer beforehand (Optional)"):
-        p_name = st.text_input("Name (Optional)", placeholder="Trainer")
-        p_item = st.text_input("Item of Desire (Optional)", placeholder="SSR Card Name")
-        prayer_text = st.text_area("Prayer Text", placeholder="Shiraoki-sama, please give me the card I want...", height=100)
-        catalyst = st.file_uploader("Upload a catalyst (Image)", type=['png', 'jpg', 'jpeg'], label_visibility="collapsed")
-
+    # Calculate Button
     if st.button("Tell me my odds, Shiraoki 🙇", type="primary", use_container_width=True):
         st.session_state.calculated = True
         
-        # Only send if at least one field is filled
+        # Check if prayer inputs exist in session state (keys are set below)
+        # We access them safely
+        p_name = st.session_state.get("p_name", "")
+        p_item = st.session_state.get("p_item", "")
+        prayer_text = st.session_state.get("prayer_text", "")
+        catalyst = st.session_state.get("catalyst", None)
+
+        # Only proceed if at least one field is filled
         if p_name or p_item or prayer_text or catalyst:
-            success, error_msg = send_prayer(p_name, p_item, prayer_text, catalyst)
-            if success:
-                st.toast("Shiraoki has received your prayer... 🙏", icon="⛩️")
-            else:
-                st.error(error_msg)
+            # Check file size (10MB limit)
+            valid_file = True
+            if catalyst and catalyst.size > 10 * 1024 * 1024:
+                st.warning("⚠️ Catalyst image is too large (>10MB). Prayer was NOT sent, but odds were calculated.")
+                valid_file = False
+
+            if valid_file:
+                # Create a signature of the current prayer
+                cat_sig = f"{catalyst.name}-{catalyst.size}" if catalyst else "None"
+                current_signature = f"{p_name}|{p_item}|{prayer_text}|{cat_sig}"
+                
+                # Retrieve last sent signature
+                last_sent = st.session_state.get("last_prayer_signature", "")
+                
+                # Only send if it's different from the last one
+                if current_signature != last_sent:
+                    success, error_msg = send_prayer(p_name, p_item, prayer_text, catalyst)
+                    if success:
+                        st.toast("Shiraoki has received your prayer... 🙏", icon="⛩️")
+                        st.session_state.last_prayer_signature = current_signature
+                    else:
+                        st.error(error_msg)
+                # else: Do nothing (spam prevention), just calculate stats
+
+    st.markdown("---")
+    st.subheader("🙏 Shrine Offering")
+    with st.expander("Write a prayer beforehand (Optional)"):
+        # We use keys so their values are accessible in the button logic above
+        st.text_input("Name (Optional)", placeholder="Trainer", key="p_name")
+        st.text_input("Item of Desire (Optional)", placeholder="SSR Card Name", key="p_item")
+        st.text_area("Prayer Text", placeholder="Shiraoki-sama, please give me the SSR Kita...", height=100, key="prayer_text")
+        st.file_uploader("Upload a catalyst (Image, max 10MB)", type=['png', 'jpg', 'jpeg'], label_visibility="collapsed", key="catalyst")
+
 
 # Results Area
 if 'calculated' in st.session_state:
