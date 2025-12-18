@@ -84,7 +84,7 @@ def calculate_data(total_pulls, mode_selection, pool_ssr, pool_sr):
     data['tables'] = []
     
     if not has_promo_sr:
-        data['tables'].append({'name': 'Total Banner SSRs (A+B)', 'rows': gen_table_rows(total_pulls, r_p_ssr), 'color': '#E53E3E', 'bg': '#FFF5F5'})
+        data['tables'].append({'name': 'Total Banner SSRs (Both Promo Cards)', 'rows': gen_table_rows(total_pulls, r_p_ssr), 'color': '#E53E3E', 'bg': '#FFF5F5'})
     
     if has_promo_sr:
         data['tables'].append({'name': 'Specific Banner SR', 'rows': gen_table_rows(total_pulls, p_1_p_sr), 'color': '#D69E2E', 'bg': '#FFFFF0'})
@@ -200,11 +200,11 @@ col_ui, col_res = st.columns([1, 2])
 with col_ui:
     st.subheader("⚙️ Settings")
     w_pulls = st.number_input("Total Pulls", min_value=1, max_value=10000, value=200, step=1)
-    w_mode = st.selectbox("Banner Type", ['1 Promo SSR + 1 Promo SR', '2 Promo SSRs'])
+    w_mode = st.selectbox("Banner Type", ['2 Promo SSRs', '1 Promo SSR + 1 Promo SR'])
     
     c1, c2 = st.columns(2)
-    w_pool_ssr = c1.number_input("Pool SSRs", value=43)
-    w_pool_sr = c2.number_input("Pool SRs", value=32)
+    w_pool_ssr = c1.number_input("Pool SSRs", value=45)
+    w_pool_sr = c2.number_input("Pool SRs", value=33)
     
     if st.button("Tell me my odds, Shiraoki 🙇", type="primary", use_container_width=True):
         st.session_state.calculated = True
@@ -217,4 +217,4 @@ if 'calculated' in st.session_state:
         st.components.v1.html(html_content, height=800, scrolling=True)
 else:
     with col_res:
-        st.info("👈 Set up and click Calculate!\n(Card count info accurate as of 11.12.2025)")
+        st.info("👈 Set up and click Calculate!\n(Card count info accurate as of 18.12.2025)")
