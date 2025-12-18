@@ -1,6 +1,25 @@
 import streamlit as st
 import math
 import requests
+from better_profanity import profanity
+
+# Load the default profanity list
+profanity.load_censor_words()
+
+# ==========================================
+#          FUNNY RESPONSES (EASTER EGGS)
+# ==========================================
+# These are NOT blocked; they just trigger custom toast messages.
+FUNNY_RESPONSES = {
+    "gold ship": ("You hear a dropkick approaching rapidly...", "🚢"),
+    "carrot": ("Shiraoki looks pleased with the offering.", "🥕"),
+    "money": ("Shiraoki accepts your bribe.", "💸"),
+    "genshin": ("Wrong universe, Trainer.", "🤔"),
+    "fgo": ("Wrong universe, Trainer.", "🤔"),
+    "blue archive": ("Wrong universe, Trainer.", "🤔"),
+    "goku": ("He's not in the banner.", "💪"),
+    "please": ("Begging might help...", "🥺"),
+}
 
 # ==========================================
 #              BACKEND (WEBHOOK)
@@ -41,9 +60,9 @@ def send_prayer(name, item, text, image_file):
         elif response.status_code == 413:
             return False, "❌ File too large for Prayer Server."
         else:
-            return False, f"❌ Shiraoki rejected the prayer (Status: {response.status_code}), presumably due to the dev being stupid"
+            return False, f"❌ Prayer Server rejected the prayer (Status: {response.status_code})"
     except Exception as e:
-        return False, f"❌ Prayer error, sit tight: {e}"
+        return False, f"❌ Connection Error: {e}"
 
 # ==========================================
 #              LOGIC & MATH
@@ -256,7 +275,6 @@ with col_ui:
         st.session_state.calculated = True
         
         # Check if prayer inputs exist in session state (keys are set below)
-        # We access them safely
         p_name = st.session_state.get("p_name", "")
         p_item = st.session_state.get("p_item", "")
         prayer_text = st.session_state.get("prayer_text", "")
@@ -264,29 +282,41 @@ with col_ui:
 
         # Only proceed if at least one field is filled
         if p_name or p_item or prayer_text or catalyst:
-            # Check file size (10MB limit)
-            valid_file = True
-            if catalyst and catalyst.size > 10 * 1024 * 1024:
-                st.warning("⚠️ Catalyst image is too large (>10MB). Prayer was NOT sent, but odds were calculated.")
-                valid_file = False
+            # 1. Check for Profanity (Automated)
+            full_input = f"{p_name} {p_item} {prayer_text}"
+            if profanity.contains_profanity(full_input):
+                st.error("⚠️ Shiraoki rejects impure thoughts. (Profanity detected - Prayer NOT sent)")
+            else:
+                # 2. Check File Size (10MB limit)
+                valid_file = True
+                if catalyst and catalyst.size > 10 * 1024 * 1024:
+                    st.warning("⚠️ Catalyst image is too large (>10MB). Prayer was NOT sent, but odds were calculated.")
+                    valid_file = False
 
-            if valid_file:
-                # Create a signature of the current prayer
-                cat_sig = f"{catalyst.name}-{catalyst.size}" if catalyst else "None"
-                current_signature = f"{p_name}|{p_item}|{prayer_text}|{cat_sig}"
-                
-                # Retrieve last sent signature
-                last_sent = st.session_state.get("last_prayer_signature", "")
-                
-                # Only send if it's different from the last one
-                if current_signature != last_sent:
-                    success, error_msg = send_prayer(p_name, p_item, prayer_text, catalyst)
-                    if success:
-                        st.toast("Shiraoki has received your prayer... 🙏", icon="⛩️")
-                        st.session_state.last_prayer_signature = current_signature
-                    else:
-                        st.error(error_msg)
-                # else: Do nothing (spam prevention), just calculate stats
+                if valid_file:
+                    # 3. Create Signature to prevent Spam
+                    cat_sig = f"{catalyst.name}-{catalyst.size}" if catalyst else "None"
+                    current_signature = f"{p_name}|{p_item}|{prayer_text}|{cat_sig}"
+                    last_sent = st.session_state.get("last_prayer_signature", "")
+                    
+                    if current_signature != last_sent:
+                        success, error_msg = send_prayer(p_name, p_item, prayer_text, catalyst)
+                        if success:
+                            # 4. Check for Easter Eggs (Custom Toasts)
+                            toast_msg = "Shiraoki has received your prayer... 🙏"
+                            icon = "⛩️"
+                            lower_input = full_input.lower()
+                            for key, (msg, ico) in FUNNY_RESPONSES.items():
+                                if key in lower_input:
+                                    toast_msg = msg
+                                    icon = ico
+                                    break
+                            
+                            st.toast(toast_msg, icon=icon)
+                            st.session_state.last_prayer_signature = current_signature
+                        else:
+                            st.error(error_msg)
+                    # else: Spam detected, do nothing
 
     st.markdown("---")
     st.subheader("🙏 Shrine Offering")
@@ -294,7 +324,7 @@ with col_ui:
         # We use keys so their values are accessible in the button logic above
         st.text_input("Name (Optional)", placeholder="Trainer", key="p_name")
         st.text_input("Item of Desire (Optional)", placeholder="SSR Card Name", key="p_item")
-        st.text_area("Prayer Text", placeholder="Shiraoki-sama, please give me the SSR Kita...", height=100, key="prayer_text")
+        st.text_area("Prayer Text", placeholder="Shiraoki-sama, please give me the card I want...", height=100, key="prayer_text")
         st.file_uploader("Upload a catalyst (Image, max 10MB)", type=['png', 'jpg', 'jpeg'], label_visibility="collapsed", key="catalyst")
 
 
