@@ -15,7 +15,7 @@ EASTER_EGGS = {
     "harikite": ("HARRIKITE IKKOU!", "🙏"),
     "harrikite": ("HARRIKITE IKKOU!", "🙏"),
     "kitasan": ("HARRIKITE IKKOU!", "🙏"),
-    "speed": ("Is your account kinda Kitasan-less?", "😌")
+    "speed": ("Is your account kinda Kitasan-less?", "😌"),
     "carrot": ("Shiraoki looks pleased with the offering.", "🥕"),
     "money": ("Shiraoki accepts your bribe.", "💸"),
     "genshin": ("Wrong universe, Trainer.", "🤔"),
