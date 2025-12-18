@@ -84,7 +84,7 @@ def calculate_data(total_pulls, mode_selection, pool_ssr, pool_sr):
     data['tables'] = []
     
     if not has_promo_sr:
-        data['tables'].append({'name': 'Total Banner SSRs (Both Promo Cards)', 'rows': gen_table_rows(total_pulls, r_p_ssr), 'color': '#E53E3E', 'bg': '#FFF5F5'})
+        data['tables'].append({'name': 'Total Banner SSRs (Both Cards)', 'rows': gen_table_rows(total_pulls, r_p_ssr), 'color': '#E53E3E', 'bg': '#FFF5F5'})
     
     if has_promo_sr:
         data['tables'].append({'name': 'Specific Banner SR', 'rows': gen_table_rows(total_pulls, p_1_p_sr), 'color': '#D69E2E', 'bg': '#FFFFF0'})
