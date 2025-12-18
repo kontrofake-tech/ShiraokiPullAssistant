@@ -55,9 +55,9 @@ def calculate_data(total_pulls, mode_selection, pool_ssr, pool_sr):
     sig_sr = math.sqrt(var_sr)
 
     data['stats'] = [
-        {'title': 'Total SRs', 'mu': ev_sr, 'sigma': sig_sr, 'color': '#D69E2E', 'bg': '#FFFFF0', 'icon': '✨'},
-        {'title': 'Total SSRs', 'mu': ev_ssr, 'sigma': sig_ssr, 'color': '#805AD5', 'bg': '#FAF5FF', 'icon': '🔮'},
-        {'title': 'Banner SSRs', 'mu': ev_ban, 'sigma': sig_ban, 'color': '#E53E3E', 'bg': '#FFF5F5', 'icon': '🔥'}
+        {'title': 'Total SRs Expected', 'mu': ev_sr, 'sigma': sig_sr, 'color': '#D69E2E', 'bg': '#FFFFF0', 'icon': '✨'},
+        {'title': 'Total SSRs Expected', 'mu': ev_ssr, 'sigma': sig_ssr, 'color': '#805AD5', 'bg': '#FAF5FF', 'icon': '🔮'},
+        {'title': 'Banner SSRs Expected', 'mu': ev_ban, 'sigma': sig_ban, 'color': '#E53E3E', 'bg': '#FFF5F5', 'icon': '🔥'}
     ]
 
     # Tables Data Generation
@@ -137,10 +137,11 @@ def render_html(data):
                 <p><strong>3. Table Legend</strong></p>
                 <ul>
                     <li><strong>Total SSRs:</strong> The expected amount of all SSR cards you pull, both the banner and off-banner ones.</li>
+                    <li><strong>Total SRs:</strong> The expected amount of all SR cards you pull.</li>
+                    <li><strong>Specific Banner SSR:</strong> If there are two banner SSR cards but you're only interested in one, this is how many copies of that specific card you can expect to get.</li>
                     <li><strong>Specific Banner SR:</strong> If there is a banner SR, this is how many copies of that specific card you can expect.</li>
-                    <li><strong>Specific Non-Promo SR:</strong> How many copies of any off-banner SR card you can expect to get from your pulls.</li>
-                    <li><strong>Specific Non-Promo SSR:</strong> How many copies of any off-banner SR card you can expect to get from your pulls.</li>
-                    <li><strong>Specific Promo SSR:</strong> If there are two banner SSR cards but you're only interested in one, this is how many copies of that specific card you can expect to get.</li>
+                    <li><strong>Specific Specific Off-Banner SR:</strong> How many copies of any off-banner SR card you can expect to get from your pulls.</li>
+                    <li><strong>Specific Specific Off-Banner SSR:</strong> How many copies of any off-banner SR card you can expect to get from your pulls.</li>
                 </ul>
             </div>
         </details>
