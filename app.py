@@ -414,7 +414,7 @@ with col_ui:
         # We use keys so their values are accessible in the button logic above
         st.text_input("Name (Optional)", placeholder="Trainer", key="p_name")
         st.text_input("Item of Desire (Optional)", placeholder="Kitasan Black SSR", key="p_item")
-        st.text_area("Prayer Text", placeholder="Shiraoki-sama, please give me the card I want...", height=100, key="prayer_text")
+        st.text_area("Prayer Text", placeholder="Please Shiraoki-sama, I need this...", height=100, key="prayer_text")
         st.file_uploader("Upload a catalyst (Image, max 10MB)", type=['png', 'jpg', 'jpeg'], label_visibility="collapsed", key="catalyst")
 
 
