@@ -1,5 +1,44 @@
 import streamlit as st
 import math
+import requests
+
+# ==========================================
+#              BACKEND (WEBHOOK)
+# ==========================================
+def send_prayer(name, item, text, image_file):
+    # Fetch from secrets
+    webhook_url = st.secrets.get("DISCORD_URL", "")
+    
+    if not webhook_url:
+        print("No DISCORD_URL found in secrets.")
+        return
+
+    # Default values for empty inputs
+    safe_name = name.strip() if name else "Anonymous"
+    safe_item = item.strip() if item else "something special"
+    
+    # Format: **X** is praying for **ABC**: "textextext"
+    content_msg = f"**{safe_name}** is praying for **{safe_item}**:"
+    if text:
+        content_msg += f"\n>>> {text}"
+    else:
+        content_msg += "\n*(Silent prayer)*"
+
+    data = {
+        "content": content_msg
+    }
+    
+    files = {}
+    if image_file:
+        # discord needs the file tuple: (filename, file_object, mimetype)
+        files = {
+            "file": (image_file.name, image_file.getvalue(), image_file.type)
+        }
+
+    try:
+        requests.post(webhook_url, data=data, files=files)
+    except Exception as e:
+        print(f"Error sending prayer: {e}")
 
 # ==========================================
 #              LOGIC & MATH
@@ -207,8 +246,21 @@ with col_ui:
     w_pool_ssr = c1.number_input("Pool SSRs", value=45)
     w_pool_sr = c2.number_input("Pool SRs", value=33)
     
+    st.markdown("---")
+    st.subheader("🙏 Shrine Offering")
+    with st.expander("Write a prayer beforehand (Optional)"):
+        p_name = st.text_input("Name (Optional)", placeholder="Trainer")
+        p_item = st.text_input("Item of Desire (Optional)", placeholder="SSR Card Name")
+        prayer_text = st.text_area("Prayer Text", placeholder="Shiraoki-sama, please give me the card I want...", height=100)
+        catalyst = st.file_uploader("Upload a catalyst (Image)", type=['png', 'jpg', 'jpeg'], label_visibility="collapsed")
+
     if st.button("Tell me my odds, Shiraoki 🙇", type="primary", use_container_width=True):
         st.session_state.calculated = True
+        
+        # Only send if at least one field is filled
+        if p_name or p_item or prayer_text or catalyst:
+            send_prayer(p_name, p_item, prayer_text, catalyst)
+            st.toast("Shiraoki has received your prayer... 🙏", icon="⛩️")
 
 # Results Area
 if 'calculated' in st.session_state:
