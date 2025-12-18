@@ -12,10 +12,8 @@ except ImportError:
     FALLBACK_BAD_WORDS = ["nsfw", "scam", "xxx", "porn", "hentai"]
 
 # ==========================================
-#          FUNNY RESPONSES (EASTER EGGS)
+#         easter eggs
 # ==========================================
-# Format: "keyword": ("Message", "Icon")
-# Keys must be lowercase!
 EASTER_EGGS = {
     # --- The Classics ---
     "gold ship": ("You hear a dropkick approaching rapidly...", "🚢"),
@@ -64,19 +62,19 @@ EASTER_EGGS = {
     "biwa": ("Who are you calling big head?!", "👓"),
     "hayahide": ("Who are you calling big head?!", "👓"),
     "sweep": ("I'll cast a spell on you!", "🧙‍♀️"),
-    "helios": ("Party time! Way!", "🤟"),
+    "helios": ("WEIIIIIIIIII!!!", "🤟"),
     "palmer": ("Nige-kiri!", "🏃"),
-    "nature": ("Third place isn't so bad...", "🥉"),
+    "nature": ("Are you pulling for 3rd...?", "🥉"),
     "maya": ("Take off!", "✈️"),
     "topgun": ("Take off!", "✈️"),
-    "opera": ("Hahaha! The Opera King has arrived!", "👑"),
-    "tm": ("Hahaha! The Opera King has arrived!", "👑"),
+    "opera": ("Hahaha! The Opera King may arrive!", "👑"),
+    "tm": ("Hahaha! The Opera King may arrive", "👑"),
     "admire": ("Vega...", "🌠"),
     "vega": ("...", "🌠"),
-    "ticket": ("WINNING TICKET!!", "😭"),
-    "spe": ("Japan's Best Horse Girl!", "🗾"),
+    "ticket": ("WAAAAAAAAAAAH!!", "😭"),
+    "spe": ("AGEMASEN!", "🗾"),
     "suzuka": ("I just want to run in the silence.", "🍃"),
-    "el": ("El Condor Pasa!!", "🦅"),
+    " el ": ("El Condor Pasa!?!?", "🦅"),
     "king": ("Ohohoho!", "👑"),
     "halo": ("Ohohoho!", "👑"),
     "shakur": ("Fine, I'll run.", "😒"),
