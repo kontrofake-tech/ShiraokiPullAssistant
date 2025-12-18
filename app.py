@@ -12,8 +12,10 @@ except ImportError:
     FALLBACK_BAD_WORDS = ["nsfw", "scam", "xxx", "porn", "hentai"]
 
 # ==========================================
-#         easter eggs
+#          FUNNY RESPONSES (EASTER EGGS)
 # ==========================================
+# Format: "keyword": ("Message", "Icon")
+# Keys must be lowercase!
 EASTER_EGGS = {
     # --- The Classics ---
     "gold ship": ("You hear a dropkick approaching rapidly...", "🚢"),
@@ -67,14 +69,14 @@ EASTER_EGGS = {
     "nature": ("Are you pulling for 3rd...?", "🥉"),
     "maya": ("Take off!", "✈️"),
     "topgun": ("Take off!", "✈️"),
-    "opera": ("Hahaha! The Opera King may arrive!", "👑"),
-    "tm": ("Hahaha! The Opera King may arrive", "👑"),
+    "opera": ("Hahaha! The Opera King has arrived!", "👑"),
+    "tm": ("Hahaha! The Opera King has arrived!", "👑"),
     "admire": ("Vega...", "🌠"),
     "vega": ("...", "🌠"),
     "ticket": ("WAAAAAAAAAAAH!!", "😭"),
     "spe": ("AGEMASEN!", "🗾"),
     "suzuka": ("I just want to run in the silence.", "🍃"),
-    " el ": ("El Condor Pasa!?!?", "🦅"),
+    "el": ("El Condor Pasa!!", "🦅"),
     "king": ("Ohohoho!", "👑"),
     "halo": ("Ohohoho!", "👑"),
     "shakur": ("Fine, I'll run.", "😒"),
@@ -375,14 +377,30 @@ with col_ui:
                         success, error_msg = send_prayer(p_name, p_item, prayer_text, catalyst)
                         if success:
                             # 4. Check for Easter Eggs (Custom Toasts)
+                            # PRIORITY: Check 'Item of Desire' first
                             toast_msg = "Shiraoki has received your prayer... 🙏"
                             icon = "⛩️"
-                            lower_input = full_input.lower()
-                            for key, (msg, ico) in EASTER_EGGS.items():
-                                if key in lower_input:
-                                    toast_msg = msg
-                                    icon = ico
-                                    break
+                            
+                            found_egg = False
+                            
+                            # A. Priority Check: Item of Desire
+                            if p_item:
+                                item_lower = p_item.lower()
+                                for key, (msg, ico) in EASTER_EGGS.items():
+                                    if key in item_lower:
+                                        toast_msg = msg
+                                        icon = ico
+                                        found_egg = True
+                                        break
+                            
+                            # B. Secondary Check: Other fields (if no egg found yet)
+                            if not found_egg:
+                                full_lower = full_input.lower()
+                                for key, (msg, ico) in EASTER_EGGS.items():
+                                    if key in full_lower:
+                                        toast_msg = msg
+                                        icon = ico
+                                        break
                             
                             st.toast(toast_msg, icon=icon)
                             st.session_state.last_prayer_signature = current_signature
