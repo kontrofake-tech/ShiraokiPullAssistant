@@ -129,18 +129,18 @@ def render_html(data):
             <summary>❓ How to read these results (Click to expand)</summary>
             <div class="gc-help-content">
                 <p><strong>1. Sigma (σ) Ranges</strong><br>
-                A sigma is used to depict the standard deviation from the expected result. The ranges represent how likely you are to fall into this specific threshold. It is very, very unlikely you fall outside of the 3sigma range.
+                A sigma is used to depict the standard deviation from the expected result. The ranges represent how likely you are to fall into this specific threshold. It is extremely unlikely you fall outside of the 3σ range.
                 </p>
                 <p><strong>2. Table Probabilities</strong><br>
                 Probabilities in the tables are given both as probability of getting the <strong>exact count</strong>, and the probablity to get <strong>"exactly this or more"</strong>.
                 </p>
                 <p><strong>3. Table Legend</strong></p>
                 <ul>
-                    <li><strong>Total SSRs:</strong> All SSR cards you pull.</li>
-                    <li><strong>Specific Promo SR:</strong> If there is a promo SR, these are the amounts you can expect.</li>
-                    <li><strong>Specific Non-Promo SR:</strong> Off-banner SR card expectation.</li>
-                    <li><strong>Specific Non-Promo SSR:</strong> Off-banner SSR card expectation.</li>
-                    <li><strong>Specific Promo SSR:</strong> Specific Banner SSR expectation.</li>
+                    <li><strong>Total SSRs:</strong> The expected amount of all SSR cards you pull, both the banner and off-banner ones.</li>
+                    <li><strong>Specific Banner SR:</strong> If there is a banner SR, this is how many copies of that specific card you can expect.</li>
+                    <li><strong>Specific Non-Promo SR:</strong> How many copies of any off-banner SR card you can expect to get from your pulls.</li>
+                    <li><strong>Specific Non-Promo SSR:</strong> How many copies of any off-banner SR card you can expect to get from your pulls.</li>
+                    <li><strong>Specific Promo SSR:</strong> If there are two banner SSR cards but you're only interested in one, this is how many copies of that specific card you can expect to get.</li>
                 </ul>
             </div>
         </details>
