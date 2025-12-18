@@ -10,8 +10,7 @@ def send_prayer(name, item, text, image_file):
     webhook_url = st.secrets.get("DISCORD_URL", "")
     
     if not webhook_url:
-        print("No DISCORD_URL found in secrets.")
-        return
+        return False, "❌ Error: DISCORD_URL is missing in secrets."
 
     # Default values for empty inputs
     safe_name = name.strip() if name else "Anonymous"
@@ -36,9 +35,13 @@ def send_prayer(name, item, text, image_file):
         }
 
     try:
-        requests.post(webhook_url, data=data, files=files)
+        response = requests.post(webhook_url, data=data, files=files)
+        if response.status_code in [200, 204]:
+            return True, "Prayer sent!"
+        else:
+            return False, f"❌ Discord rejected the prayer (Status: {response.status_code})"
     except Exception as e:
-        print(f"Error sending prayer: {e}")
+        return False, f"❌ Connection Error: {e}"
 
 # ==========================================
 #              LOGIC & MATH
@@ -259,8 +262,11 @@ with col_ui:
         
         # Only send if at least one field is filled
         if p_name or p_item or prayer_text or catalyst:
-            send_prayer(p_name, p_item, prayer_text, catalyst)
-            st.toast("Shiraoki has received your prayer... 🙏", icon="⛩️")
+            success, error_msg = send_prayer(p_name, p_item, prayer_text, catalyst)
+            if success:
+                st.toast("Shiraoki has received your prayer... 🙏", icon="⛩️")
+            else:
+                st.error(error_msg)
 
 # Results Area
 if 'calculated' in st.session_state:
